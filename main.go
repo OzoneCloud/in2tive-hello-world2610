@@ -6,12 +6,12 @@ import (
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, `{"route":"/hello","response":"hello world main branch"}`)
+	fmt.Fprintf(w, `{"route":"/hello","response":"hello world v1 branch"}`)
 }
 
 func empty(w http.ResponseWriter, req *http.Request) {
 
-	fmt.Fprintf(w, `{"route":"/","branch":"main"}`)
+	fmt.Fprintf(w, `{"route":"/","branch":"v1"}`)
 }
 
 func main() {
