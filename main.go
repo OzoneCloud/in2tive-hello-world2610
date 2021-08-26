@@ -23,5 +23,5 @@ func main() {
 
 	r.HandleFunc("/", empty)
 	r.HandleFunc("/hello", hello)
-	fmt.Print(http.ListenAndServe(":33000", r))
+	fmt.Print(http.ListenAndServe(":3000", r))
 }
