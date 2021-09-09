@@ -33,5 +33,5 @@ func main() {
 
 	r.HandleFunc(newrelic.WrapHandleFunc(app, "/", empty))
 	r.HandleFunc(newrelic.WrapHandleFunc(app, "/hello", hello))
-	fmt.Print(http.ListenAndServe(":30100", r))
+	fmt.Print(http.ListenAndServe(":3000", r))
 }
