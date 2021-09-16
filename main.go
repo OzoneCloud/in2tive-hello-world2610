@@ -25,7 +25,7 @@ func hello(w http.ResponseWriter, req *http.Request) {
 
 func empty(w http.ResponseWriter, req *http.Request) {
 	rand.Seed(time.Now().UnixNano())
-	if rand.Float32() > 0.9 {
+	if rand.Float32() > 0.98 {
 		fmt.Println("500 - Something bad happened!")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - Something bad happened!"))
