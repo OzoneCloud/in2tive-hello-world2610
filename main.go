@@ -15,6 +15,8 @@ import (
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
+	span := tracer.StartSpan("web.request", tracer.ResourceName("/"))
+	defer span.Finish()
 	rand.Seed(time.Now().UnixNano())
 	if rand.Float32() > 0.98 {
 		fmt.Println("500 - Something bad happened!")
@@ -27,6 +29,8 @@ func hello(w http.ResponseWriter, req *http.Request) {
 }
 
 func empty(w http.ResponseWriter, req *http.Request) {
+	span := tracer.StartSpan("web.request", tracer.ResourceName("/hello"))
+	defer span.Finish()
 	rand.Seed(time.Now().UnixNano())
 	if rand.Float32() > 0.98 {
 		fmt.Println("500 - Something bad happened!")
@@ -71,6 +75,5 @@ func main() {
 		r.HandleFunc("/", empty)
 		r.HandleFunc("/hello", hello)
 	}
-
 	fmt.Print(http.ListenAndServe(":3000", r))
 }
