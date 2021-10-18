@@ -22,6 +22,7 @@ func hello(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("500 - Something bad happened!")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - Something bad happened!"))
+		span.Finish(tracer.WithError(fmt.Errorf("500 - Something bad happened!")))
 	} else {
 		fmt.Println("200 - Success")
 		fmt.Fprintf(w, `{"route":"/hello","response":"hello world v3 branch"}`)
@@ -36,6 +37,7 @@ func empty(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("500 - Something bad happened!")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - Something bad happened!"))
+		span.Finish(tracer.WithError(fmt.Errorf("500 - Something bad happened!")))
 	} else {
 		fmt.Println("200 - Success")
 		fmt.Fprintf(w, `{"route":"/","branch":"v3"}`)
