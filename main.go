@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
+
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 
 	"github.com/gorilla/mux"
 	"github.com/newrelic/go-agent/v3/newrelic"
@@ -36,17 +39,38 @@ func empty(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	app, err := newrelic.NewApplication(
-		newrelic.ConfigFromEnvironment(),
-	)
-	if err != nil {
-		panic(err)
+
+	apmProvider := os.Getenv("APM_TYPE")
+	r := mux.NewRouter()
+	switch apmProvider {
+	case "newrelic":
+		fmt.Println("Initializing new relic apm agent")
+		app, err := newrelic.NewApplication(
+			newrelic.ConfigFromEnvironment(),
+		)
+		if err != nil {
+			panic(err)
+		}
+		r.HandleFunc(newrelic.WrapHandleFunc(app, "/", empty))
+		r.HandleFunc(newrelic.WrapHandleFunc(app, "/hello", hello))
+
+	case "elastic":
+		fmt.Println("Initializing elastic apm agent")
+		r.Use(apmgorilla.Middleware())
+		r.HandleFunc("/", empty)
+		r.HandleFunc("/hello", hello)
+
+	case "datadog":
+		fmt.Println("Initializing datadog apm agent")
+		tracer.Start()
+		defer tracer.Stop()
+		r.HandleFunc("/", empty)
+		r.HandleFunc("/hello", hello)
+	default:
+		fmt.Println("No apm agent initialized")
+		r.HandleFunc("/", empty)
+		r.HandleFunc("/hello", hello)
 	}
 
-	r := mux.NewRouter()
-	r.Use(apmgorilla.Middleware())
-
-	r.HandleFunc(newrelic.WrapHandleFunc(app, "/", empty))
-	r.HandleFunc(newrelic.WrapHandleFunc(app, "/hello", hello))
 	fmt.Print(http.ListenAndServe(":3000", r))
 }
